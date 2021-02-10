@@ -20,20 +20,18 @@
 
 const selectNav = document.getElementById('navbar__list'); //select all id navbar__list
 const selectSections = document.querySelectorAll('section'); // select all section tag
-
+const menuLink = selectNav.getElementsByClassName("menu__link");
 /**
  * End Global Variables
  * Start Helper Functions
  * 
  */
 /*********************** Helper func for scroll func ************************/
- const isInViewport =  (elem)=> {
+const isInViewport = (elem) => {
     const bounding = elem.getBoundingClientRect();
     return (
-        bounding.top >= 0 &&
-        bounding.left >= 0 &&
-        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+        bounding.top >= -300 &&
+        bounding.bottom >= 300
     );
 };
 /**************************************************************************/
@@ -47,47 +45,59 @@ const selectSections = document.querySelectorAll('section'); // select all secti
 // build the nav
 /**************************************************************************/
 // creat loop for each sections in the page
-const creatMenu = ()=> {
+const creatMenu = () => {
     selectSections.forEach(section => {
         const navElement = `<li class='menu__link ${section.className}' data-link=${section.id}><a href="#${section.id}">${section.dataset.nav}</li>`
         selectNav.insertAdjacentHTML('beforeend', navElement)
-    }) 
-}; 
+    })
+};
 /**************************************************************************/
 
 // Add class 'active' to section when near top of viewport
 
 /****************************** build func to add your-active-class ********************************************/
-const addActiveTo = ()=> {
+const addActiveTo = () => {
     window.addEventListener('scroll', () => {
         for (let i = 0; i < selectSections.length; i++) {
             isInViewport(selectSections[i]) ? //from helper function
                 selectSections[i].classList.add("your-active-class") : selectSections[i].classList.remove("your-active-class");
         }
     });
-}; 
+    /***************************** add active class for current element ***************/
+};
 /**************************************************************************/
 
 // Scroll to anchor ID using scrollTO event
 /**************************************************************************/
-const scrollToElement = ()=> {
-    document
-    .querySelectorAll('.menu__link a[href^="#"]')
-    .forEach(menuLink => {
-        menuLink.onclick = function(ele) {
-            ele.preventDefault();
-            let hash = this.getAttribute('href');
-            let target = document.querySelector(hash);
-            let headerOffset = 100;
-            let elementPosition = target.offsetTop;
-            let offsetPosition = elementPosition - headerOffset;
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth"
+
+
+const scrollToElement = () => {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
             });
-        };
+
+        });
+    })
+    for (let i = 0; i < menuLink.length; i++) {
+        menuLink[i].addEventListener("click", function() {
+      const current = document.getElementsByClassName("active");
+  
+      // If there's no active class
+      if (current.length > 0) {
+        current[0].className = current[0].className.replace(" active", "");
+      }
+  
+      // Add the active class to the current/clicked button
+      this.className += " active";
     });
+  }
 };
+
+
+
 /**************************************************************************/
 /**
  * End Main Functions
