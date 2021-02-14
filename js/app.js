@@ -26,14 +26,7 @@ const menuLink = selectNav.getElementsByClassName("menu__link");
  * Start Helper Functions
  * 
  */
-/*********************** Helper func for scroll func ************************/
-const isInViewport = (elem) => {
-    const bounding = elem.getBoundingClientRect();
-    return (
-        bounding.top >= -300 &&
-        bounding.bottom >= 300
-    );
-};
+/*********************** Helper func for scroll func ***********************/
 /**************************************************************************/
 
 /**
@@ -57,13 +50,20 @@ const creatMenu = () => {
 
 /****************************** build func to add your-active-class ********************************************/
 const addActiveTo = () => {
-    window.addEventListener('scroll', () => {
-        for (let i = 0; i < selectSections.length; i++) {
-            isInViewport(selectSections[i]) ? //from helper function
-                selectSections[i].classList.add("your-active-class") : selectSections[i].classList.remove("your-active-class");
+    window.onscroll = function () {
+        // Don't run the rest of the code if every section is already visible
+        if (!document.querySelectorAll('section:not(.your-active-class)')) return;
+
+        // Run this code for every section in sections
+        for (const section of selectSections) {
+            if (section.getBoundingClientRect().top <= window.innerHeight * 0.75 && section.getBoundingClientRect().top > 0) {
+                section.classList.add('your-active-class');
+            } else {
+                section.classList.remove('your-active-class');
+            }
         }
-    });
-    /***************************** add active class for current element ***************/
+    };
+
 };
 /**************************************************************************/
 
@@ -82,18 +82,18 @@ const scrollToElement = () => {
         });
     })
     for (let i = 0; i < menuLink.length; i++) {
-        menuLink[i].addEventListener("click", function() {
-      const current = document.getElementsByClassName("active");
-  
-      // If there's no active class
-      if (current.length > 0) {
-        current[0].className = current[0].className.replace(" active", "");
-      }
-  
-      // Add the active class to the current/clicked button
-      this.className += " active";
-    });
-  }
+        menuLink[i].addEventListener("click", function () {
+            const current = document.getElementsByClassName("active");
+
+            // If there's no active class
+            if (current.length > 0) {
+                current[0].className = current[0].className.replace(" active", "");
+            }
+
+            // Add the active class to the current/clicked button
+            this.className += " active";
+        });
+    }
 };
 
 
